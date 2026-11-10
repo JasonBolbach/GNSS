@@ -55,9 +55,32 @@ UBX_CFG_MSG::ToSet(Cmd, UBX_NAV_PVT::MSG_CLASS, UBX_NAV_PVT::MSG_ID, 1);        
 Serial1.write(Cmd, UBX_NAV_PVT::ToPoll(Cmd));                                                   // poll it once
 ```
 
-See [`examples/BasicMonitor`](examples/BasicMonitor) for a complete program: it sets up Serial at
-115200, initialises the receiver, pumps its serial input through `GNSS_Filter` and prints each NMEA
-and UBX message as it completes.
+Examples:
+
+- [`examples/BasicMonitor`](examples/BasicMonitor): sets up Serial at 115200, initialises the receiver,
+  pumps its serial input through `GNSS_Filter` and prints each NMEA and UBX message as it completes.
+- [`examples/SkyPlot`](examples/SkyPlot): draws the satellites on a polar sky plot in a LovyanGFX
+  sprite. You supply your own display class in `LGFX_User.h` (a template is included).
+
+### Sky plot
+
+`SatelliteManager` collects the satellites from NMEA GSV and UBX NAV-SAT and gives you plot coordinates;
+it does no drawing, so it works with any graphics library:
+
+```cpp
+SatelliteManager Sats;
+Sats.AddGSV(&GSV, NMEA.Header());        // from a GSV sentence (the header's talker selects the system)
+Sats.AddNAVSAT(NavSat);                  // from a UBX-NAV-SAT body (check LengthOK() first)
+
+uint16_t n = Sats.BuildPlot(radius);     // ages out stale satellites, fills Sats.Coords[0..n)
+for (uint16_t i = 0; i < n; i++) {
+  auto& c = Sats.Coords[i];              // c.X / c.Y from the centre (east right, north up), c.System, c.ID, c.Used, c.Tracked
+}
+```
+
+Satellites are keyed by constellation and number (`GNSS_System` + per-system ID), so GPS 5 and Galileo 5
+are different satellites, and one reported by both NMEA and UBX is merged. Satellites with no position
+yet, or below the horizon, are kept but not plotted.
 
 ## Layout
 
@@ -67,6 +90,8 @@ src/
   GNSS_Config.h       debug-print hook (ARGPRINT)
   GNSS_Filter.h       byte-stream framer
   StaticQueue.h       lock-free single-producer / single-consumer ring buffer
+  GNSS_System.h       GNSS_System enum (value = u-blox gnssId) and NMEA satellite-number mapping
+  SatelliteManager.h  satellite table + sky-plot coordinates, fed from GSV and NAV-SAT
   NMEA.h              all NMEA sentences
   NMEA/
     NMEA_Helper.h     field splitter and sentence base class

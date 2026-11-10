@@ -15,9 +15,13 @@ public:
 		return (Remaining < 0) ? 0 : (Remaining > 4 ? 4 : Remaining);
 	}
 	uint16_t PRN(int Index) { if (Index >= SatsInMessage() || Index < 0) return 0; return pHelper.FieldAsInt((Index * 4) + 4); }
-	uint16_t Elevation(int Index) { if (Index >= SatsInMessage() || Index < 0) return 0; return pHelper.FieldAsInt((Index * 4) + 5); }
+	// Elevation in degrees; signed (a satellite below the horizon is negative). 0 when unknown: check PositionKnown().
+	int16_t Elevation(int Index) { if (Index >= SatsInMessage() || Index < 0) return 0; return pHelper.FieldAsInt((Index * 4) + 5); }
 	uint16_t Azimuth(int Index) { if (Index >= SatsInMessage() || Index < 0) return 0; return pHelper.FieldAsInt((Index * 4) + 6); }
 	uint16_t SNR(int Index) { if (Index >= SatsInMessage() || Index < 0) return 0; return pHelper.FieldAsInt((Index * 4) + 7); }
+	// False when the receiver left elevation or azimuth empty (satellite known but not yet located), in which
+	// case Elevation() / Azimuth() return 0 and must not be plotted. An empty SNR means "not tracked" and reads as 0.
+	bool PositionKnown(int Index) { if (Index >= SatsInMessage() || Index < 0) return false; return pHelper.HasField((Index * 4) + 5) && pHelper.HasField((Index * 4) + 6); }
 
 	void Print() {
 		ARGPRINT("GSV: TotalMessages: %d, MessageNumber: %d, TotalSatsInView: %d, SatsInMessage: %d\r\n", TotalMessages(), MessageNumber(), TotalSatsInView(), SatsInMessage());

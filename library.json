@@ -10,12 +10,26 @@
   "license": "MIT",
   "frameworks": "*",
   "platforms": "*",
-  "headers": ["GNSS.h"],
+  "headers": [
+    "GNSS.h"
+  ],
   "examples": [
     {
       "name": "BasicMonitor",
       "base": "examples/BasicMonitor",
-      "files": ["src/main.cpp", "platformio.ini"]
+      "files": [
+        "src/main.cpp",
+        "platformio.ini"
+      ]
+    },
+    {
+      "name": "SkyPlot",
+      "base": "examples/SkyPlot",
+      "files": [
+        "src/main.cpp",
+        "src/LGFX_User.h",
+        "platformio.ini"
+      ]
     }
   ]
 }

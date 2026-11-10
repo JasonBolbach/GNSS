@@ -32,3 +32,21 @@
     #define ARGPRINT printf
   #endif
 #endif
+
+// ---------------------------------------------------------------------------
+// Millisecond clock used for ageing out satellites (SatelliteManager).
+// Default: Arduino millis(), else a steady clock. Define GNSS_MILLIS() yourself to override.
+// ---------------------------------------------------------------------------
+#ifndef GNSS_MILLIS
+  #include <cstdint>
+  #if defined(ARDUINO)
+    #include <Arduino.h>
+    inline uint32_t GNSS_DefaultMillis() { return (uint32_t)millis(); }
+  #else
+    #include <chrono>
+    inline uint32_t GNSS_DefaultMillis() {
+      return (uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+    }
+  #endif
+  #define GNSS_MILLIS() GNSS_DefaultMillis()
+#endif
