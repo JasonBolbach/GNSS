@@ -1,0 +1,21 @@
+{
+  "name": "GNSS",
+  "version": "0.1.0",
+  "description": "NMEA and UBX stream framing, message parsing and u-blox command builders for GNSS receivers. Header-only, no dynamic allocation.",
+  "keywords": "gnss, gps, nmea, ubx, u-blox, parser, esp32",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JasonBolbach/GNSS.git"
+  },
+  "license": "MIT",
+  "frameworks": "*",
+  "platforms": "*",
+  "headers": ["GNSS.h"],
+  "examples": [
+    {
+      "name": "BasicMonitor",
+      "base": "examples/BasicMonitor",
+      "files": ["src/main.cpp", "platformio.ini"]
+    }
+  ]
+}
