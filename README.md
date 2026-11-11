@@ -10,8 +10,11 @@ headers (and Arduino's `Serial` for the default debug output).
 PlatformIO (`platformio.ini`):
 
 ```ini
-lib_deps = https://github.com/JasonBolbach/GNSS.git
+lib_deps = jasonbolbach/GNSS@^0.1.0
 ```
+
+Or from the CLI: `pio pkg install --library "jasonbolbach/GNSS"`.
+To track the latest unreleased code use `lib_deps = https://github.com/JasonBolbach/GNSS.git`.
 
 For local development use `lib_deps = symlink:///path/to/GNSS`.
 
